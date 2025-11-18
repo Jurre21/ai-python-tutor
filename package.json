@@ -9,17 +9,55 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+  ],
   "contributes": {
     "viewsContainers": {
-      "activitybar": {}
+      "activitybar": [
+        {
+          "id": "ai-tutor",
+          "title": "AI Tutor",
+          "icon": "media/icon.svg"
+        }
+      ]
     },
     "views": {
-      "ai-tutor-sidebar": []
+      "ai-tutor": [
+        {
+          "id": "ai-tutor.chatView",
+          "name": "AI Python Tutor"
+        }
+      ]
     },
-    "commands": [],
+    "commands": [
+      {
+        "command": "ai-tutor.explainSelection",
+        "title": "AI Tutor: Explain Selection"
+      },
+      {
+        "command": "ai-tutor.generateQuiz",
+        "title": "AI Tutor: Generate Quiz"
+      },
+      {
+        "command": "ai-tutor.runAndDebug",
+        "title": "AI Tutor: Run & Debug"
+      },
+      {
+        "command": "ai-tutor.askBackend",
+        "title": "AI Tutor: Ask Backend"
+      }
+    ],
     "menus": {
-      "editor/context": []
+      "editor/context": [
+        {
+          "command": "ai-tutor.explainSelection",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "ai-tutor.generateQuiz",
+          "when": "editorHasSelection"
+        }
+      ]
     }
   },
   "scripts": {
