@@ -3,6 +3,7 @@
   "displayName": "ai-python-tutor",
   "description": "AI Python Tutor with AnythingLLM Backend",
   "version": "0.0.1",
+  "main": "./out/extension.js",
   "engines": {
     "vscode": "^1.106.1"
   },
