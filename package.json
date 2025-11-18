@@ -25,7 +25,8 @@
       "ai-tutor": [
         {
           "id": "ai-tutor.chatView",
-          "name": "AI Python Tutor"
+          "name": "AI Python Tutor",
+          "icon": "media/icon.png"
         }
       ]
     },
