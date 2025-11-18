@@ -17,9 +17,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     // Listen for messages from the HTML UI
     webviewView.webview.onDidReceiveMessage(async (data) => {
-      switch (data.type) {
+        switch (data.type) {
         case "onAskQuestion": {
-          if (!data.value) return;
+          if (!data.value) {
+            return;
+          }
           // Send the user's question to the Extension Logic (Phase 4)
           vscode.commands.executeCommand("ai-tutor.askBackend", data.value);
           break;

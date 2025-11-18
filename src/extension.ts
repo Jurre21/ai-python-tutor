@@ -27,15 +27,13 @@ export function activate(context: vscode.ExtensionContext) {
                 body: JSON.stringify(payload)
             });
 
-            if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
+            if (!response.ok) {
+                throw new Error(`Server Error: ${response.statusText}`);
+            }
             
-            const data = await response.json();
+            const data: any = await response.json();
             // Depending on endpoint, get the right field
-            const resultText = data.analysis |
-
-| data.quiz |
-| data.answer |
-| data.summary;
+            const resultText = data.analysis || data.quiz || data.answer || data.summary || '';
             
             sidebarProvider.updateContent(resultText.replace(/\n/g, "<br>")); // Simple formatting
         } catch (error) {
@@ -48,7 +46,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('ai-tutor.explainSelection', () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
+            if (!editor) {
+                return;
+            }
 
             const selection = editor.document.getText(editor.selection);
             if (!selection) {
@@ -66,13 +66,13 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('ai-tutor.generateQuiz', () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
+            if (!editor) {
+                return;
+            }
             
             const selection = editor.document.getText(editor.selection);
             vscode.commands.executeCommand('ai-tutor.chatView.focus');
-            sendToBackend('/quiz', { code_or_topic: selection |
-
-| "Python Concepts" });
+            sendToBackend('/quiz', { code_or_topic: selection || "Python Concepts" });
         })
     );
 
@@ -80,7 +80,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('ai-tutor.runAndDebug', () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
+            if (!editor) {
+                return;
+            }
 
             const filePath = editor.document.fileName;
             vscode.window.showInformationMessage(`Running ${filePath}...`);
@@ -89,14 +91,9 @@ export function activate(context: vscode.ExtensionContext) {
             cp.exec(`python3 "${filePath}"`, (err, stdout, stderr) => {
                 vscode.commands.executeCommand('ai-tutor.chatView.focus');
                 
-                if (err |
-
-| stderr) {
+                if (err || stderr) {
                     // ERROR FOUND: Send code + error to backend for debugging
-                    const errorMsg = stderr |
-
-| err?.message |
-| "Unknown Error";
+                    const errorMsg = stderr || err?.message || "Unknown Error";
                     vscode.window.showErrorMessage("Code failed! Asking AI Tutor...");
                     
                     sendToBackend('/analyze', { 
