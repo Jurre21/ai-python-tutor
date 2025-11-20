@@ -12,8 +12,11 @@
     "Other"
   ],
 
-  "activationEvents": [
-  ],
+"activationEvents": [
+    "*",                          
+    "onView:ai-tutor.chatView",
+    "onCommand:ai-tutor.explainSelection"
+],
 
   "contributes": {
     "viewsContainers": {

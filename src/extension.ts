@@ -3,7 +3,7 @@ import * as cp from 'child_process';
 import { SidebarProvider } from './SidebarProvider';
 
 // Configuration: Your FastAPI Backend URL
-const BACKEND_URL = 'http://127.0.0.1:8000/';
+const BACKEND_URL = 'http://127.0.0.1:8000';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations! "ai-python-tutor" is now active!');
