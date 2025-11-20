@@ -1,33 +1,36 @@
 {
   "name": "ai-python-tutor",
-  "displayName": "ai-python-tutor",
+  "displayName": "AI Python Tutor",
+  "publisher": "jurre21",
   "description": "AI Python Tutor with AnythingLLM Backend",
   "version": "0.0.1",
   "main": "./out/extension.js",
   "engines": {
-    "vscode": "^1.106.1"
+    "vscode": "^1.106.0"
   },
   "categories": [
     "Other"
   ],
+
   "activationEvents": [
   ],
+
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "ai-tutor",
+          "id": "ai-tutor-sidebar",
           "title": "AI Tutor",
-          "icon": "media/icon.svg"
+          "icon": "media/logo.svg"
         }
       ]
     },
     "views": {
-      "ai-tutor": [
+      "ai-tutor-sidebar": [
         {
           "id": "ai-tutor.chatView",
           "name": "AI Python Tutor",
-          "icon": "media/icon.png"
+          "icon": "media/logo.svg"
         }
       ]
     },
@@ -47,7 +50,11 @@
       {
         "command": "ai-tutor.askBackend",
         "title": "AI Tutor: Ask Backend"
-      }
+      },
+      {
+        "command": "ai-tutor.testBackend",
+        "title": "AI Tutor: Test Backend Connection"
+      }  
     ],
     "menus": {
       "editor/context": [
@@ -62,6 +69,7 @@
       ]
     }
   },
+
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

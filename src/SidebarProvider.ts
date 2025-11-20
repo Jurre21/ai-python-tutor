@@ -5,29 +5,36 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
-  public resolveWebviewView(webviewView: vscode.WebviewView) {
-    this._view = webviewView;
+  public resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken
+  ) {
+    try {
+      this._view = webviewView;
 
-    webviewView.webview.options = {
-      enableScripts: true,
-      localResourceRoots: [this._extensionUri],
-    };
+      webviewView.webview.options = {
+        enableScripts: true,
+        localResourceRoots: [this._extensionUri],
+      };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+      webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    // Listen for messages from the HTML UI
-    webviewView.webview.onDidReceiveMessage(async (data) => {
-      switch (data.type) {
-        case "onAskQuestion": {
-          if (!data.value) {
-            return;
+      // Listen for messages from the HTML UI
+      webviewView.webview.onDidReceiveMessage(async (data) => {
+        switch (data.type) {
+          case "onAskQuestion": {
+            if (!data.value) {
+              return;
+            }
+            vscode.commands.executeCommand("ai-tutor.askBackend", data.value);
+            break;
           }
-          // Send the user's question to the Extension Logic
-          vscode.commands.executeCommand("ai-tutor.askBackend", data.value);
-          break;
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.error('SidebarProvider.resolveWebviewView error', err);
+    }
   }
 
   public updateContent(htmlContent: string) {
@@ -43,7 +50,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     // 1. Get the URI for your logo (Assumes you have a 'media/logo.png' file)
     // If you don't have a logo yet, this line is harmless, but the image won't show.
     const logoUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "logo.png")
+      vscode.Uri.joinPath(this._extensionUri, "media", "logo.svg")
     );
 
     // 2. Define the Content Security Policy (CSP)
