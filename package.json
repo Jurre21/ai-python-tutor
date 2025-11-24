@@ -13,9 +13,6 @@
   ],
 
 "activationEvents": [
-    "*",                          
-    "onView:ai-tutor.chatView",
-    "onCommand:ai-tutor.explainSelection"
 ],
 
   "contributes": {
@@ -33,7 +30,7 @@
         {
           "id": "ai-tutor.chatView",
           "name": "AI Python Tutor",
-          "icon": "media/logo.svg"
+          "type": "webview"
         }
       ]
     },

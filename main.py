@@ -83,14 +83,14 @@ async def query_anythingllm(workspace_slug: str, prompt: str, mode: str, session
             if 'result' in data and 'textResponse' in data['result']:
                 # Standard chat response
                 return AnythingLLMResponse(
-                    textResponse=data['result'], # <-- CORRECTED
-                    sources=data.get('sources',)
+                    textResponse=data['result']['textResponse'], # <-- CORRECTED
+                    sources=data.get('sources', [])
                 )
             elif 'textResponse' in data:
                 # Simpler response structure
                 return AnythingLLMResponse(
-                    textResponse=data,          # <-- CORRECTED
-                    sources=data.get('sources',)
+                    textResponse=data['textResponse'],          # <-- CORRECTED
+                    sources=data.get('sources', [])
                 )
             else:
                  raise HTTPException(status_code=500, detail=f"Unexpected API response format: {data}")
