@@ -30,8 +30,22 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             vscode.commands.executeCommand("ai-tutor.askBackend", data.value);
             break;
           }
+          // --- ADD THESE CASES ---
+          case "onExplain": {
+            vscode.commands.executeCommand("ai-tutor.explainSelection");
+            break;
+          }
+          case "onQuiz": {
+            vscode.commands.executeCommand("ai-tutor.generateQuiz");
+            break;
+          }
+          case "onRun": {
+            vscode.commands.executeCommand("ai-tutor.runAndDebug");
+            break;
+          }
         }
       });
+      
     } catch (err) {
       console.error('SidebarProvider.resolveWebviewView error', err);
     }
@@ -130,9 +144,35 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             <img src="${logoUri}" alt="Logo" />
             <h3>AI Python Tutor</h3>
         </div>
+      
+        <div class="button-row">
+          <button onclick="vscode.postMessage({ type: 'onExplain' })">🧠 Explain</button>
+          <button onclick="vscode.postMessage({ type: 'onQuiz' })">📝 Quiz</button>
+          <button onclick="vscode.postMessage({ type: 'onRun' })">▶️ Run</button>
+        </div>
 
         <div class="chat-box" id="chat-container"></div>
-        <input type="text" id="question-input" placeholder="Ask a follow-up..." />
+        <input type="text" id="question-input" placeholder="Ask a question..." />
+
+        <style>
+            /* Add this simple styling for the buttons */
+            .button-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+          }
+          button {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            width: 100%; /* Make them equal width */
+          }
+          button:hover {
+            background: var(--vscode-button-hoverBackground);
+          }
+        </style>
 
         <script>
           const vscode = acquireVsCodeApi();
