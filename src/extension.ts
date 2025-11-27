@@ -94,7 +94,7 @@ vscode.commands.registerCommand('ai-tutor.explainSelection', () => {
     context.subscriptions.push(
         vscode.commands.registerCommand('ai-tutor.runAndDebug', async () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
+            if (!editor) {return;}
 
             // 1. Get Selected Text
             const selection = editor.document.getText(editor.selection);
