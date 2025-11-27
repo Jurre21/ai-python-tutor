@@ -194,11 +194,25 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           window.addEventListener('message', event => {
             const message = event.data;
             if (message.type === 'add-response') {
+    
+            // 1. Always try to remove an existing "Thinking..." bubble first
+            const existingThinking = document.getElementById('thinking-bubble');
+            if (existingThinking) {
+              existingThinking.remove();
+            }
+
+            // 2. If the new message IS "Thinking...", add it with the ID
+            if (message.value.includes('Thinking...')) {
+              addMessage(message.value, 'ai-msg', 'thinking-bubble');
+            } 
+            // 3. Otherwise, it's a real answer, just add it normally
+            else {
               addMessage(message.value, 'ai-msg');
             }
-          });
+          }
+        });
 
-          function addMessage(text, className) {
+          function addMessage(text, className, id=null) {
             const div = document.createElement('div');
             div.className = className;
             div.innerHTML = text; 

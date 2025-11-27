@@ -1,5 +1,8 @@
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 import { SidebarProvider } from './SidebarProvider';
 
 // Configuration: Your FastAPI Backend URL
@@ -74,8 +77,16 @@ vscode.commands.registerCommand('ai-tutor.explainSelection', () => {
             }
 
             const selection = editor.document.getText(editor.selection);
+
+            // FIX: Stop if nothing is selected
+            if (!selection) {
+                vscode.window.showInformationMessage('Please select some code to quiz first.');
+                return;
+            }
+
             vscode.commands.executeCommand('ai-tutor.chatView.focus');
-            sendToBackend('/quiz', { code_or_topic: selection || 'Python Concepts' });
+            // Fix: Send only the selection
+            sendToBackend('/quiz', { code_or_topic: selection });
         })
     );
 
@@ -83,24 +94,37 @@ vscode.commands.registerCommand('ai-tutor.explainSelection', () => {
     context.subscriptions.push(
         vscode.commands.registerCommand('ai-tutor.runAndDebug', async () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor) {
+            if (!editor) return;
+
+            // 1. Get Selected Text
+            const selection = editor.document.getText(editor.selection);
+        
+            // 2. Guard Clause: Stop if empty
+            if (!selection) {
+                vscode.window.showInformationMessage('Please select the code you want to run.');
                 return;
             }
 
-            const filePath = editor.document.fileName;
-            vscode.window.showInformationMessage(`Running ${filePath}...`);
+            // 3. Write selection to a temporary file
+            // We do this because Python cannot easily run multi-line strings from the command line
+            const tempFilePath = path.join(os.tmpdir(), 'temp_run.py');
+            fs.writeFileSync(tempFilePath, selection);
 
-            const pythonPath =
-                vscode.workspace.getConfiguration('python').get('defaultInterpreterPath') || 'python';
+            vscode.window.showInformationMessage(`Running selection...`);
 
-            cp.exec(`"${pythonPath}" "${filePath}"`, (err, stdout, stderr) => {
+            const pythonPath = vscode.workspace.getConfiguration('python').get('defaultInterpreterPath') || 'python';
+
+            // 4. Execute the TEMPORARY file, not the original document
+            cp.exec(`"${pythonPath}" "${tempFilePath}"`, (err, stdout, stderr) => {
                 vscode.commands.executeCommand('ai-tutor.chatView.focus');
 
                 if (err !== null || stderr !== '') {
                     const errorMsg = stderr || (err !== null ? err.message : 'Unknown Error');
                     vscode.window.showErrorMessage('Code failed! Asking AI Tutor...');
+                
+                    // 5. Send ONLY the selection to the backend for analysis
                     sendToBackend('/analyze', {
-                        code: editor.document.getText(),
+                        code: selection, // <-- Send selection, NOT editor.document.getText()
                         error_output: errorMsg
                     });
                 } else {
