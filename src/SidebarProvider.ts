@@ -125,6 +125,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             border: 1px solid var(--vscode-widget-border); 
             max-width: 90%;
           }
+          .msg-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px; /* Space between different messages */
+          }
+
+          .sender-label {
+            font-size: 0.75rem;
+            font-style: italic;
+            margin-bottom: 4px;
+            opacity: 0.7;
+            font-family: var(--vscode-font-family);
+          }
           input { 
             width: 100%; 
             padding: 8px; 
@@ -207,17 +220,33 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             } 
             // 3. Otherwise, it's a real answer, just add it normally
             else {
-              addMessage(message.value, 'ai-msg');
+              addMessage(message.value, 'ai-msg');5
             }
           }
         });
 
-          function addMessage(text, className, id=null) {
-            const div = document.createElement('div');
-            div.className = className;
-            div.innerHTML = text; 
-            chatContainer.appendChild(div);
-            // Auto-scroll to bottom
+          function addMessage(text, className, id = null) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'msg-wrapper';
+            if (id) {
+              wrapper.id = id;
+            }
+            const label = document.createElement('span');
+            label.className = 'sender-label';
+
+            if (className === 'user-msg') {
+              wrapper.style.alignItems = 'flex-end'; // Align everything to the right
+              label.innerText = 'You';
+            } else {
+              wrapper.style.alignItems = 'flex-start'; // Align everything to the left
+              label.innerText = 'AI Python Tutor';
+            }
+            const messageDiv = document.createElement('div');
+            messageDiv.className = className;
+            messageDiv.innerHTML = text;
+            wrapper.appendChild(label);
+            wrapper.appendChild(messageDiv);
+            chatContainer.appendChild(wrapper);
             window.scrollTo(0, document.body.scrollHeight);
           }
         </script>
